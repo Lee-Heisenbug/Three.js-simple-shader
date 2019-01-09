@@ -1,18 +1,54 @@
 var vshader = `
+    varying vec3 vNormal;
     void main(){
+
+        vNormal = vec3( modelViewMatrix * vec4( normal, 1.0 ) ) - vec3( modelViewMatrix * vec4( 0, 0, 0, 1.0 ) );
         gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4( position, 1.0 );
+
     }
 `;
 
 var fshader = `
+    ${THREE.ShaderChunk.common}
+    ${THREE.ShaderChunk.lights_pars_begin}
+
+    vec3 calculateDiffuse(
+        const in vec3 objColor, const in vec3 lightColor,
+        const in vec3 lightDir, const in vec3 fragNormal 
+    ) {
+
+        return objColor * lightColor * max( dot( fragNormal, lightDir ), 0.0 );
+
+    }
+
     uniform vec3 color;
-    uniform vec3 ambientLightColor;
+    varying vec3 vNormal;
     void main(){
-        gl_FragColor = vec4(color * ambientLightColor, 1.0);
+
+        vec3 result;
+        vec3 ambient;
+        vec3 diffuse = vec3( 0, 0, 0 );
+        vec3 fragNormal = normalize( vNormal );
+
+        ambient = color * ambientLightColor;
+
+        for( int i = 0; i < NUM_DIR_LIGHTS; ++i ){
+
+            diffuse = diffuse + calculateDiffuse(
+                color, directionalLights[i].color,
+                normalize( directionalLights[i].direction ), fragNormal
+            );
+
+        }
+
+        result = ambient + diffuse;
+
+        gl_FragColor = vec4(result, 1.0);
+
     }
 `;
 
-var customMaterial, box, ambientLight, gui;
+var customMaterial, box, ambientLight, directionalLight, directionalLightHelper, gui;
 
 constructScene( scene );
 
@@ -21,11 +57,15 @@ guiControl();
 animate();
 
 function animate() {
+
     requestAnimationFrame( animate );
-	renderer.render( scene, camera );
+    directionalLightHelper.update();
+    renderer.render( scene, camera );
+
 }
 
 function constructScene( scene ){
+
     camera.position.z = 5
 
     customMaterial = new THREE.ShaderMaterial({
@@ -48,10 +88,16 @@ function constructScene( scene ){
     scene.add(box);
 
     ambientLight = new THREE.AmbientLight( new THREE.Color(0xffffff), 1.0 );
+    directionalLight = new THREE.DirectionalLight( new THREE.Color(0xffffff), 1.0 );
+    directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight);
     scene.add( ambientLight );
+    scene.add( directionalLight );
+    scene.add( directionalLightHelper );
+
 }
 
 function guiControl(){
+
     gui = new dat.GUI();
     let ambientFolder = gui.addFolder('ambient');
     let materialFolder = gui.addFolder('material');
@@ -64,4 +110,5 @@ function guiControl(){
     materialFolder.add(customMaterial.uniforms.color.value, 'r', 0, 1);
     materialFolder.add(customMaterial.uniforms.color.value, 'g', 0, 1);
     materialFolder.add(customMaterial.uniforms.color.value, 'b', 0, 1);
+
 }
