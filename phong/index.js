@@ -70,7 +70,8 @@ function animate() {
 
 function constructScene( scene ){
 
-    camera.position.z = 5
+    camera.position.set( -3, 3, 3 );
+    control.update();
 
     customMaterial = new THREE.ShaderMaterial({
         uniforms: THREE.UniformsUtils.merge( [
