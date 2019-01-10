@@ -32,14 +32,18 @@ var fshader = `
 
         ambient = color * ambientLightColor;
 
-        for( int i = 0; i < NUM_DIR_LIGHTS; ++i ){
+        #if NUM_DIR_LIGHTS > 0
 
-            diffuse = diffuse + calculateDiffuse(
-                color, directionalLights[i].color,
-                normalize( directionalLights[i].direction ), fragNormal
-            );
+            for( int i = 0; i < NUM_DIR_LIGHTS; ++i ){
 
-        }
+                diffuse = diffuse + calculateDiffuse(
+                    color, directionalLights[i].color,
+                    normalize( directionalLights[i].direction ), fragNormal
+                );
+    
+            }
+
+        #endif
 
         result = ambient + diffuse;
 
