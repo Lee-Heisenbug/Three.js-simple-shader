@@ -2,7 +2,7 @@ var vshader = `
     varying vec3 vNormal;
     void main(){
 
-        vNormal = vec3( modelViewMatrix * vec4( normal, 1.0 ) ) - vec3( modelViewMatrix * vec4( 0, 0, 0, 1.0 ) );
+        vNormal = normalMatrix * normal;
         gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4( position, 1.0 );
 
     }
@@ -58,9 +58,9 @@ animate();
 
 function animate() {
 
-    requestAnimationFrame( animate );
     directionalLightHelper.update();
     renderer.render( scene, camera );
+    requestAnimationFrame( animate );
 
 }
 
@@ -87,7 +87,7 @@ function constructScene( scene ){
 
     scene.add(box);
 
-    ambientLight = new THREE.AmbientLight( new THREE.Color(0xffffff), 1.0 );
+    ambientLight = new THREE.AmbientLight( new THREE.Color(0xffffff), 0.3 );
     directionalLight = new THREE.DirectionalLight( new THREE.Color(0xffffff), 1.0 );
     directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight);
     scene.add( ambientLight );
