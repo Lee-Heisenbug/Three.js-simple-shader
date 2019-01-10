@@ -1,8 +1,10 @@
 var vshader = `
     varying vec3 vNormal;
+    varying vec3 vPosition;
     void main(){
 
         vNormal = normalMatrix * normal;
+        vPosition = vec3( modelViewMatrix * vec4( position , 1.0 ) );
         gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4( position, 1.0 );
 
     }
@@ -23,12 +25,17 @@ var fshader = `
 
     uniform vec3 color;
     varying vec3 vNormal;
+    varying vec3 vPosition;
     void main(){
 
         vec3 result;
         vec3 ambient;
-        vec3 diffuse = vec3( 0, 0, 0 );
+        vec3 diffuse = vec3( 0 );
+        vec3 specular = vec3( 0 );
+        vec3 reflectDir;
+        float specularStrength = 0.0;
         vec3 fragNormal = normalize( vNormal );
+        vec3 fragPosition = normalize( vPosition );
 
         ambient = color * ambientLightColor;
 
@@ -38,14 +45,27 @@ var fshader = `
 
                 diffuse = diffuse + calculateDiffuse(
                     color, directionalLights[i].color,
-                    normalize( directionalLights[i].direction ), fragNormal
+                    directionalLights[i].direction, fragNormal
                 );
+
+                reflectDir = reflect( - directionalLights[i].direction, fragNormal );
+                if( dot( reflectDir, fragNormal ) < 0.0 ) {
+
+                    specularStrength = 0.0;
+
+                }else {
+
+                    specularStrength = max( dot( reflectDir, - fragPosition ) , 0.0 );
+
+                }
+
+                specular = specular + directionalLights[i].color * specularStrength;
     
             }
 
         #endif
 
-        result = ambient + diffuse;
+        result = ambient + diffuse + specular;
 
         gl_FragColor = vec4(result, 1.0);
 
