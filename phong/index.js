@@ -93,6 +93,7 @@ function constructScene( scene ){
 
     ambientLight = new THREE.AmbientLight( new THREE.Color(0xffffff), 0.3 );
     directionalLight = new THREE.DirectionalLight( new THREE.Color(0xffffff), 1.0 );
+    directionalLight.position.set( 1, 1, 1 );
     directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight);
     scene.add( ambientLight );
     scene.add( directionalLight );
