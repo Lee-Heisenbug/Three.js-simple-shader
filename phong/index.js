@@ -49,15 +49,8 @@ var fshader = `
                 );
 
                 reflectDir = reflect( - directionalLights[i].direction, fragNormal );
-                if( dot( reflectDir, fragNormal ) < 0.0 ) {
 
-                    specularStrength = 0.0;
-
-                }else {
-
-                    specularStrength = max( dot( reflectDir, - fragPosition ) , 0.0 );
-
-                }
+                specularStrength = max( dot( reflectDir, - fragPosition ) , 0.0 );
 
                 specular = specular + directionalLights[i].color * specularStrength;
     
@@ -114,7 +107,7 @@ function constructScene( scene ){
 
     ambientLight = new THREE.AmbientLight( new THREE.Color(0xffffff), 0.3 );
     directionalLight = new THREE.DirectionalLight( new THREE.Color(0xffffff), 1.0 );
-    directionalLight.position.set( 1, 1, 1 );
+    directionalLight.position.set( 0, 1, 0 );
     directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight);
     scene.add( ambientLight );
     scene.add( directionalLight );
