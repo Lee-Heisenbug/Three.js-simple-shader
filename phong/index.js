@@ -1,10 +1,13 @@
 var vshader = `
     varying vec3 vNormal;
     varying vec3 vPosition;
+    varying vec2 vUv;
+
     void main(){
 
         vNormal = normalMatrix * normal;
         vPosition = vec3( modelViewMatrix * vec4( position , 1.0 ) );
+        vUv = uv;
         gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4( position, 1.0 );
 
     }
@@ -23,19 +26,31 @@ var fshader = `
 
     }
 
-    uniform vec3 color;
+    uniform vec3 colorFac;
+    uniform sampler2D colorMap;
+    uniform bool hasColorMap;
     varying vec3 vNormal;
     varying vec3 vPosition;
+    varying vec2 vUv;
     void main(){
 
-        vec3 result;
+        vec3 color;
         vec3 ambient;
         vec3 diffuse = vec3( 0 );
         vec3 specular = vec3( 0 );
         vec3 reflectDir;
+        vec3 result;
         float specularStrength = 0.0;
         vec3 fragNormal = normalize( vNormal );
         vec3 fragPosition = normalize( vPosition );
+
+        // set the color
+        color = colorFac;
+        if( hasColorMap ) {
+
+            color = color * vec3( texture2D( colorMap, vUv ) );
+
+        }
 
         ambient = color * ambientLightColor;
 
@@ -59,6 +74,7 @@ var fshader = `
         #endif
 
         result = ambient + diffuse + specular;
+        // result = color;
 
         gl_FragColor = vec4(result, 1.0);
 
@@ -66,6 +82,7 @@ var fshader = `
 `;
 
 var customMaterial, box, ambientLight, directionalLight, directionalLightHelper, gui;
+var textureLoader = new THREE.TextureLoader(), colorMap;
 
 constructScene( scene );
 
@@ -90,7 +107,9 @@ function constructScene( scene ){
         uniforms: THREE.UniformsUtils.merge( [
             THREE.UniformsLib[ "lights" ],
             {
-                color: new THREE.Uniform(new THREE.Color(0xffff00))
+                colorFac: new THREE.Uniform(new THREE.Color(0xffffff)),
+                colorMap: { value: null },
+                hasColorMap: { value: false },
             }
         ] ),
         lights: true,
@@ -105,6 +124,7 @@ function constructScene( scene ){
 
     scene.add(box);
 
+    //add light
     ambientLight = new THREE.AmbientLight( new THREE.Color(0xffffff), 0.3 );
     directionalLight = new THREE.DirectionalLight( new THREE.Color(0xffffff), 1.0 );
     directionalLight.position.set( 0, 1, 0 );
@@ -112,6 +132,14 @@ function constructScene( scene ){
     scene.add( ambientLight );
     scene.add( directionalLight );
     scene.add( directionalLightHelper );
+
+    // init map
+    textureLoader.load( './images/diffuse.png', ( colorMap ) => {
+
+        customMaterial.uniforms.colorMap.value = colorMap;
+        customMaterial.uniforms.hasColorMap.value = true;
+        
+    } )
 
 }
 
@@ -126,8 +154,8 @@ function guiControl(){
     ambientFolder.add(ambientLight.color,'b', 0, 1);
     ambientFolder.add(ambientLight, 'intensity', 0, 1);
 
-    materialFolder.add(customMaterial.uniforms.color.value, 'r', 0, 1);
-    materialFolder.add(customMaterial.uniforms.color.value, 'g', 0, 1);
-    materialFolder.add(customMaterial.uniforms.color.value, 'b', 0, 1);
+    materialFolder.add(customMaterial.uniforms.colorFac.value, 'r', 0, 1);
+    materialFolder.add(customMaterial.uniforms.colorFac.value, 'g', 0, 1);
+    materialFolder.add(customMaterial.uniforms.colorFac.value, 'b', 0, 1);
 
 }
