@@ -29,26 +29,43 @@ var fshader = `
     uniform vec3 colorFac;
     uniform sampler2D colorMap;
     uniform bool hasColorMap;
+
+    uniform vec3 specularFac;
+    uniform sampler2D specularMap;
+    uniform bool hasSpecularMap;
+
+    uniform float shininess;
     varying vec3 vNormal;
     varying vec3 vPosition;
     varying vec2 vUv;
     void main(){
 
         vec3 color;
+        vec3 specularColor;
+
         vec3 ambient;
         vec3 diffuse = vec3( 0 );
         vec3 specular = vec3( 0 );
-        vec3 reflectDir;
         vec3 result;
-        float specularStrength = 0.0;
+
         vec3 fragNormal = normalize( vNormal );
         vec3 fragPosition = normalize( vPosition );
+        vec3 reflectDir;
+        float specularStrength;
 
         // set the color
         color = colorFac;
         if( hasColorMap ) {
 
             color = color * vec3( texture2D( colorMap, vUv ) );
+
+        }
+
+        // set specular color
+        specularColor = specularFac;
+        if( hasSpecularMap ) {
+
+            specularColor = specularColor * vec3( texture2D( specularMap, vUv ) );
 
         }
 
@@ -65,9 +82,9 @@ var fshader = `
 
                 reflectDir = reflect( - directionalLights[i].direction, fragNormal );
 
-                specularStrength = max( dot( reflectDir, - fragPosition ) , 0.0 );
+                specularStrength = pow( max( dot( reflectDir, - fragPosition ) , 0.0 ), shininess );
 
-                specular = specular + directionalLights[i].color * specularStrength;
+                specular = specular + specularColor * directionalLights[i].color * specularStrength;
     
             }
 
@@ -110,6 +127,10 @@ function constructScene( scene ){
                 colorFac: new THREE.Uniform(new THREE.Color(0xffffff)),
                 colorMap: { value: null },
                 hasColorMap: { value: false },
+                specularFac: new THREE.Uniform(new THREE.Color(0xffffff)),
+                specularMap: { value: null },
+                hasSpecularMap: { value: false },
+                shininess: { value: 32 }
             }
         ] ),
         lights: true,
@@ -138,6 +159,13 @@ function constructScene( scene ){
 
         customMaterial.uniforms.colorMap.value = colorMap;
         customMaterial.uniforms.hasColorMap.value = true;
+        
+    } )
+
+    textureLoader.load( './images/specular.png', ( specularMap ) => {
+
+        customMaterial.uniforms.specularMap.value = specularMap;
+        customMaterial.uniforms.hasSpecularMap.value = true;
         
     } )
 
