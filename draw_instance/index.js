@@ -10,8 +10,7 @@ var vshader = `
 
     void main(){
 
-        // vColor = vec4( instanceColor, 1.0 );
-        vColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+        vColor = vec4( instanceColor, 1.0 );
         gl_Position = vec4( position, 1.0 );
 
     }
@@ -61,9 +60,9 @@ function constructScene( scene ){
 
     for( let i = 0; i < instanceCount; ++i ){
 
-        instanceGeo.addAttribute( 'instanceInitialProgress', new THREE.Float32BufferAttribute( [ 0.0 ], 1 ) );
-        instanceGeo.addAttribute( 'instanceSpeed', new THREE.Float32BufferAttribute( [ 1.0 ], 1 ) );
-        instanceGeo.addAttribute( 'instanceColor', new THREE.Float32BufferAttribute( [ 1.0, 1.0, 1.0 ], 3 ) );
+        instanceGeo.addAttribute( 'instanceInitialProgress', new THREE.InstancedBufferAttribute( new Float32Array( [ 0.0 ] ), 1 ) );
+        instanceGeo.addAttribute( 'instanceSpeed', new THREE.InstancedBufferAttribute( new Float32Array( [ 1.0 ] ), 1 ) );
+        instanceGeo.addAttribute( 'instanceColor', new THREE.InstancedBufferAttribute( new Float32Array( [ 1.0, 1.0, 1.0 ] ), 3 ) );
 
     }
 
