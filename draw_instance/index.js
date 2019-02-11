@@ -84,7 +84,7 @@ function constructScene( scene ){
     );
 
     scene.add( lines );
-    scene.add( new THREE.AxisHelper() );
+    scene.add( new THREE.AxesHelper() );
 
 }
 
