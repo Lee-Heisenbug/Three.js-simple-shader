@@ -65,7 +65,7 @@ var fshader = `
 `;
 
 var customMaterial,
-    instanceCount = 1, instanceGeo = new THREE.InstancedBufferGeometry(),
+    instanceCount = 100, instanceGeo = new THREE.InstancedBufferGeometry(),
     lines,
     gui;
 
