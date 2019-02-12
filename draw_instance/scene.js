@@ -10,8 +10,19 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 
 window.addEventListener( 'resize', onWindowResize );
 
+onWindowResize();
+
 function onWindowResize(){
-    camera.aspect = window.innerWidth / window.innerHeight;
+    
+    let aspect = window.innerHeight / window.innerWidth;
+    let width = Math.sqrt( 4 / ( aspect * aspect + 1 ) );
+    let height = width * aspect;
+
+    camera.left = width / -2;
+    camera.right = width / 2;
+    camera.top = height / 2;
+    camera.bottom = height / -2;
+
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
 }
