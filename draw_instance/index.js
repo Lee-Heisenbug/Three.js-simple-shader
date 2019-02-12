@@ -41,7 +41,7 @@ var customMaterial,
 
 constructScene( scene );
 
-// guiControl();
+guiControl();
 
 animate();
 
@@ -114,17 +114,10 @@ function constructScene( scene ){
 function guiControl(){
 
     gui = new dat.GUI();
-    let ambientFolder = gui.addFolder('ambient');
-    let materialFolder = gui.addFolder('material');
 
-    ambientFolder.add(ambientLight.color,'r', 0, 1);
-    ambientFolder.add(ambientLight.color,'g', 0, 1);
-    ambientFolder.add(ambientLight.color,'b', 0, 1);
-    ambientFolder.add(ambientLight, 'intensity', 0, 1);
-
-    materialFolder.add(customMaterial.uniforms.colorFac.value, 'r', 0, 1);
-    materialFolder.add(customMaterial.uniforms.colorFac.value, 'g', 0, 1);
-    materialFolder.add(customMaterial.uniforms.colorFac.value, 'b', 0, 1);
+    let timeFolder = gui.addFolder( "time" );
+    
+    timeFolder.add( customMaterial.uniforms.time, 'value', 0, 2, 0.001 );
 
 }
 
