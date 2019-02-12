@@ -5,6 +5,7 @@ var vshader = `
     attribute float instanceInitialProgress;
     attribute float instanceSpeed;
     attribute vec3 instanceColor;
+    attribute float instanceOffsetRadian;
 
     uniform float time;
     uniform float curvature;
@@ -36,6 +37,8 @@ var vshader = `
             radian += lineWidth;
 
         }
+
+        radian += instanceOffsetRadian;
 
         return vec3( polarPosToCartesianPos( radius, radian ), 0.0 );
 
@@ -111,19 +114,22 @@ function constructScene( scene ){
 
     let speeds = [],
         progresses = [],
-        colors = [];
+        colors = [],
+        offsetRadians = [];
 
     for( let i = 0; i < instanceCount; ++i ){
 
         progresses.push( Math.random() );
         speeds.push( Math.random() );
         colors.push( Math.random(), Math.random(), Math.random() );
+        offsetRadians.push( Math.random() * 2 * Math.PI );
 
     }
 
     instanceGeo.addAttribute( 'instanceInitialProgress', new THREE.InstancedBufferAttribute( new Float32Array( progresses ), 1 ) );
     instanceGeo.addAttribute( 'instanceSpeed', new THREE.InstancedBufferAttribute( new Float32Array( speeds ), 1 ) );
     instanceGeo.addAttribute( 'instanceColor', new THREE.InstancedBufferAttribute( new Float32Array( colors ), 3 ) );
+    instanceGeo.addAttribute( 'instanceOffsetRadian', new THREE.InstancedBufferAttribute( new Float32Array( offsetRadians ), 1 ) );
 
     customMaterial = new THREE.ShaderMaterial({
         uniforms: THREE.UniformsUtils.merge( [
