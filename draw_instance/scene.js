@@ -1,5 +1,5 @@
 var scene = new THREE.Scene();
-var camera = new THREE.OrthographicCamera( 1, -1, 1, -1 );
+var camera = new THREE.OrthographicCamera( -1, 1, 1, -1 );
 var canvas = document.getElementById( 'scene-3d' );
 var renderer = new THREE.WebGLRenderer( { canvas } );
 var control = new THREE.OrbitControls( camera, canvas );
