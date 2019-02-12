@@ -49,7 +49,7 @@ var vshader = `
         float currentProgress = mod( instanceInitialProgress + instanceSpeed * time, 1.0 );
 
         vColor = vec4( instanceColor, 1.0 );
-        gl_Position = vec4( currentPosition( position, currentProgress ), 1.0 );
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( currentPosition( position, currentProgress ), 1.0 );
 
     }
 `;
