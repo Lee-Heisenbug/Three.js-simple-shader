@@ -7,10 +7,37 @@ var vshader = `
     attribute vec3 instanceColor;
 
     uniform float time;
+    uniform float curvature;
+
+    float spinEquation( float radius ) {
+
+        return radians( curvature * radius * 360.0 );
+
+    }
+
+    vec2 polarPosToCartesianPos( float radius, float radian ) {
+
+        return vec2( radius * cos( radian ), radius * sin( radian ) );
+
+    }
 
     vec3 currentPosition( vec3 initPosition, float currentProgress ) {
 
-        return initPosition + vec3( currentProgress );
+        float radius, radian;
+        float lineLength = 0.3;
+        float lineWidth = 0.1;
+
+        radius = clamp( currentProgress * ( 1.0 + lineLength ) + ( initPosition.y - 1.0 ) * lineLength , 0.0, 1.0 );
+
+        radian = spinEquation( radius );
+
+        if( initPosition.x < 0.0 ) {
+
+            radian += lineWidth;
+
+        }
+
+        return vec3( polarPosToCartesianPos( radius, radian ), 0.0 );
 
     }
 
@@ -93,7 +120,8 @@ function constructScene( scene ){
     customMaterial = new THREE.ShaderMaterial({
         uniforms: THREE.UniformsUtils.merge( [
             {
-                time: { value: 0 }
+                time: { value: 0 },
+                curvature: { value: 0.2 }
             }
         ] ),
         vertexShader: vshader,
