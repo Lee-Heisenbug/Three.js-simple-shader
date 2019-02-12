@@ -158,8 +158,10 @@ function guiControl(){
     gui = new dat.GUI();
 
     let timeFolder = gui.addFolder( "time" );
+    let curvatureFolder = gui.addFolder( "curvature" );
     
     timeFolder.add( customMaterial.uniforms.time, 'value', 0, 2, 0.001 );
+    curvatureFolder.add( customMaterial.uniforms.curvature, 'value', 0, 2, 0.001 );
 
 }
 
