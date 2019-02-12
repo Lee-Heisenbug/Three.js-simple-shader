@@ -77,7 +77,7 @@ animate();
 
 function constructScene( scene ){
 
-    camera.position.set( -3, 3, 3 );
+    camera.position.set( 0, 0, -1 );
     control.update();
 
     // construct geo
