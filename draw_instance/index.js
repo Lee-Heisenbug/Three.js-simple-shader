@@ -109,13 +109,21 @@ function constructScene( scene ){
         
     ], 1 );
 
+    let speeds = [],
+        progresses = [],
+        colors = [];
+
     for( let i = 0; i < instanceCount; ++i ){
 
-        instanceGeo.addAttribute( 'instanceInitialProgress', new THREE.InstancedBufferAttribute( new Float32Array( [ 0.0 ] ), 1 ) );
-        instanceGeo.addAttribute( 'instanceSpeed', new THREE.InstancedBufferAttribute( new Float32Array( [ 1.0 ] ), 1 ) );
-        instanceGeo.addAttribute( 'instanceColor', new THREE.InstancedBufferAttribute( new Float32Array( [ 1.0, 1.0, 1.0 ] ), 3 ) );
+        progresses.push( Math.random() );
+        speeds.push( Math.random() );
+        colors.push( Math.random(), Math.random(), Math.random() );
 
     }
+
+    instanceGeo.addAttribute( 'instanceInitialProgress', new THREE.InstancedBufferAttribute( new Float32Array( progresses ), 1 ) );
+    instanceGeo.addAttribute( 'instanceSpeed', new THREE.InstancedBufferAttribute( new Float32Array( speeds ), 1 ) );
+    instanceGeo.addAttribute( 'instanceColor', new THREE.InstancedBufferAttribute( new Float32Array( colors ), 3 ) );
 
     customMaterial = new THREE.ShaderMaterial({
         uniforms: THREE.UniformsUtils.merge( [
