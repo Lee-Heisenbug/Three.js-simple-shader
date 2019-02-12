@@ -140,7 +140,8 @@ function constructScene( scene ){
         ] ),
         vertexShader: vshader,
         fragmentShader: fshader,
-        vertexColors: true
+        vertexColors: true,
+        depthTest: false
     })
 
     lines = new THREE.Mesh(
