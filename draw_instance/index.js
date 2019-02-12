@@ -8,10 +8,18 @@ var vshader = `
 
     uniform float time;
 
+    vec3 currentPosition( vec3 initPosition, float currentProgress ) {
+
+        return initPosition + vec3( currentProgress );
+
+    }
+
     void main(){
+        
+        float currentProgress = mod( instanceInitialProgress + instanceSpeed * time, 1.0 );
 
         vColor = vec4( instanceColor, 1.0 );
-        gl_Position = vec4( position, 1.0 );
+        gl_Position = vec4( currentPosition( position, currentProgress ), 1.0 );
 
     }
 `;
