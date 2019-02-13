@@ -1,6 +1,7 @@
 var vshader = `
 
     varying vec4 vColor;
+    varying vec4 vPosition;
     
     attribute float instanceInitialProgress;
     attribute float instanceSpeed;
@@ -24,7 +25,7 @@ var vshader = `
 
     }
 
-    vec3 currentPosition( vec3 initPosition, float currentProgress ) {
+    vec3 getCurrentPosition( vec3 initPosition, float currentProgress ) {
 
         float radius, radian;
         float lineLength = instanceLineLength;
@@ -48,19 +49,36 @@ var vshader = `
     void main(){
         
         float currentProgress = mod( instanceInitialProgress + instanceSpeed * time, 1.0 );
+        vec4 currentPosition = vec4( getCurrentPosition( position, currentProgress ), 1.0 );
 
         vColor = vec4( instanceColor, 1.0 );
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( currentPosition( position, currentProgress ), 1.0 );
+        vPosition = currentPosition;
+
+        gl_Position = projectionMatrix * modelViewMatrix * currentPosition;
 
     }
 `;
 
 var fshader = `
     varying vec4 vColor;
+    varying vec4 vPosition;
+
+    uniform float fogInnerRadius;
+    uniform float fogOutterRadius;
+
+    vec4 applyFog( vec4 inputColor ) {
+
+        float fragmentRadius = length( vPosition.xy );
+
+        return vec4( inputColor.rgb, ( fragmentRadius - fogInnerRadius ) / ( fogOutterRadius - fogInnerRadius ) );
+
+    }
 
     void main(){
 
-        gl_FragColor = vColor;
+        vec4 outputColor = applyFog( vColor );
+
+        gl_FragColor = outputColor;
 
     }
 `;
@@ -141,11 +159,14 @@ function constructScene( scene ){
                 time: { value: 0 },
                 curvature: { value: 0.2 },
                 lineWidth: { value: 0.05 },
+                fogInnerRadius: { value: 0.03 },
+                fogOutterRadius: { value: 0.1 },
             }
         ] ),
         vertexShader: vshader,
         fragmentShader: fshader,
         vertexColors: true,
+        transparent: true,
         depthTest: false
     })
 
