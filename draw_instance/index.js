@@ -116,7 +116,7 @@ function constructScene( scene ){
     let speeds = [],
         progresses = [],
         colors = [],
-        offsetRadians = [];
+        offsetRadians = [],
         lineLengths = [];
 
     for( let i = 0; i < instanceCount; ++i ){
