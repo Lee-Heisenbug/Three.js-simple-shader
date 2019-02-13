@@ -6,6 +6,7 @@ var vshader = `
     attribute float instanceSpeed;
     attribute vec3 instanceColor;
     attribute float instanceOffsetRadian;
+    attribute float instanceLineLength;
 
     uniform float time;
     uniform float curvature;
@@ -26,7 +27,7 @@ var vshader = `
     vec3 currentPosition( vec3 initPosition, float currentProgress ) {
 
         float radius, radian;
-        float lineLength = 0.3;
+        float lineLength = instanceLineLength;
 
         radius = clamp( currentProgress * ( 1.0 + lineLength ) + ( initPosition.y - 1.0 ) * lineLength , 0.0, 1.0 );
 
@@ -116,6 +117,7 @@ function constructScene( scene ){
         progresses = [],
         colors = [],
         offsetRadians = [];
+        lineLengths = [];
 
     for( let i = 0; i < instanceCount; ++i ){
 
@@ -123,6 +125,7 @@ function constructScene( scene ){
         speeds.push( Math.random() );
         colors.push( Math.random(), Math.random(), Math.random() );
         offsetRadians.push( Math.random() * 2 * Math.PI );
+        lineLengths.push( 0.3 + Math.random() * 0.1 - 0.15 );
 
     }
 
@@ -130,6 +133,7 @@ function constructScene( scene ){
     instanceGeo.addAttribute( 'instanceSpeed', new THREE.InstancedBufferAttribute( new Float32Array( speeds ), 1 ) );
     instanceGeo.addAttribute( 'instanceColor', new THREE.InstancedBufferAttribute( new Float32Array( colors ), 3 ) );
     instanceGeo.addAttribute( 'instanceOffsetRadian', new THREE.InstancedBufferAttribute( new Float32Array( offsetRadians ), 1 ) );
+    instanceGeo.addAttribute( 'instanceLineLength', new THREE.InstancedBufferAttribute( new Float32Array( lineLengths ), 1 ) );
 
     customMaterial = new THREE.ShaderMaterial({
         uniforms: THREE.UniformsUtils.merge( [
