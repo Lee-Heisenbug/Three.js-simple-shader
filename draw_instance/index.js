@@ -49,6 +49,13 @@ var vshader = `
     void main(){
         
         float currentProgress = mod( instanceInitialProgress + instanceSpeed * time, 1.0 );
+
+        if( instanceInitialProgress + instanceSpeed * time < 0.0 ) {
+
+            currentProgress = 0.0;
+
+        }
+
         vec4 currentPosition = vec4( getCurrentPosition( position, currentProgress ), 1.0 );
 
         vColor = vec4( instanceColor, 1.0 );
@@ -139,7 +146,7 @@ function constructScene( scene ){
 
     for( let i = 0; i < instanceCount; ++i ){
 
-        progresses.push( Math.random() );
+        progresses.push( - Math.random() );
         speeds.push( Math.random() );
         colors.push( Math.random(), Math.random(), Math.random() );
         offsetRadians.push( Math.random() * 2 * Math.PI );
