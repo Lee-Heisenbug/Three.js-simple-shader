@@ -9,6 +9,7 @@ var vshader = `
 
     uniform float time;
     uniform float curvature;
+    uniform float lineWidth;
 
     float spinEquation( float radius ) {
 
@@ -26,7 +27,6 @@ var vshader = `
 
         float radius, radian;
         float lineLength = 0.3;
-        float lineWidth = 0.1;
 
         radius = clamp( currentProgress * ( 1.0 + lineLength ) + ( initPosition.y - 1.0 ) * lineLength , 0.0, 1.0 );
 
@@ -135,7 +135,8 @@ function constructScene( scene ){
         uniforms: THREE.UniformsUtils.merge( [
             {
                 time: { value: 0 },
-                curvature: { value: 0.2 }
+                curvature: { value: 0.2 },
+                lineWidth: { value: 0.05 },
             }
         ] ),
         vertexShader: vshader,
