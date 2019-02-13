@@ -187,10 +187,14 @@ function guiControl(){
     let timeFolder = gui.addFolder( "time" );
     let curvatureFolder = gui.addFolder( "curvature" );
     let lineWidthFolder = gui.addFolder( "lineWidth" );
+    let fogInnerRadiusFolder = gui.addFolder( "fogInnerRadius" );
+    let fogOutterRadiusFolder = gui.addFolder( "fogOutterRadius" );
     
     timeFolder.add( customMaterial.uniforms.time, 'value', 0, 2, 0.001 );
     curvatureFolder.add( customMaterial.uniforms.curvature, 'value', 0, 2, 0.001 );
     lineWidthFolder.add( customMaterial.uniforms.lineWidth, 'value', 0, 2, 0.001 );
+    fogInnerRadiusFolder.add( customMaterial.uniforms.fogInnerRadius, 'value', 0, 2, 0.001 );
+    fogOutterRadiusFolder.add( customMaterial.uniforms.fogOutterRadius, 'value', 0, 2, 0.001 );
 
 }
 
