@@ -27,7 +27,14 @@ var fshader = `
 let customMaterial,
     box, boxMaterial, diffuseMap,
     textureLoader = new THREE.TextureLoader(),
+    canvas = document.getElementById( 'scene-3d' ),
+    renderer = new THREE.WebGLRenderer( { canvas } ),
     gui;
+
+let scene = new THREE.Scene(),
+    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 ),
+    renderTarget = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, { depthBuffer: true } );
+    control = new THREE.OrbitControls( camera, canvas );
 
 let finalScene = new THREE.Scene(),
     finalSceneCamera = new THREE.OrthographicCamera(),
@@ -40,10 +47,12 @@ constructFinalScene( finalScene );
 
 guiControl();
 
-animate();
+animateFinalScene();
 
 function constructScene( scene ) {
-
+    
+    scene.add( camera );
+    
     boxMaterial = new THREE.MeshBasicMaterial();
     camera.position.set( -3, 3, 3 );
     control.update();
@@ -98,7 +107,7 @@ function constructFinalScene( scene ) {
 
     } );
 
-    planeMat.uniforms.map.value = diffuseMap;
+    planeMat.uniforms.map.value = renderTarget.texture;
 
     plane = new THREE.Mesh( planeGeo, planeMat );
     plane.frustumCulled = false;
@@ -108,6 +117,17 @@ function constructFinalScene( scene ) {
 
 }
 
+window.addEventListener( 'resize', onWindowResize );
+    
+function onWindowResize(){
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderTarget.setSize( window.innerWidth, window.innerHeight );
+}
+
+onWindowResize();
+
 function guiControl() {
 
     gui = new dat.GUI();
@@ -116,8 +136,15 @@ function guiControl() {
 
 function animate() {
 
-    // renderer.render( scene, camera );
-    renderer.render( finalScene, finalSceneCamera );
+    renderer.render( scene, camera );
     requestAnimationFrame( animate );
+
+}
+
+function animateFinalScene() {
+
+    renderer.render( scene, camera, renderTarget );
+    renderer.render( finalScene, finalSceneCamera );
+    requestAnimationFrame( animateFinalScene );
 
 }
