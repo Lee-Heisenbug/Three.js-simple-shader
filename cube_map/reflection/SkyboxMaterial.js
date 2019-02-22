@@ -1,36 +1,40 @@
-let vertexShader = `
-    varying vec3 envCoords;
+( function() {
 
-    void main(){
+    let vertexShader = `
+        varying vec3 envCoords;
 
-        envCoords = position;
-        gl_Position = ( projectionMatrix * vec4( mat3( viewMatrix ) * position, 1.0 ) ).xyww;
+        void main(){
 
-    }
-`;
+            envCoords = position;
+            gl_Position = ( projectionMatrix * vec4( mat3( viewMatrix ) * position, 1.0 ) ).xyww;
 
-let fragmentShader = `
-    ${THREE.ShaderChunk.common}
+        }
+    `;
 
-    uniform samplerCube envMap;
-    varying vec3 envCoords;
+    let fragmentShader = `
+        ${THREE.ShaderChunk.common}
 
-    void main(){
+        uniform samplerCube envMap;
+        varying vec3 envCoords;
 
-        gl_FragColor = textureCube( envMap, envCoords );
+        void main(){
 
-    }
-`;
+            gl_FragColor = textureCube( envMap, envCoords );
 
-let SkyboxMaterial = MaterialFactory({
+        }
+    `;
 
-    uniforms: {
+    window.SkyboxMaterial = MaterialFactory({
 
-        envMap: { value: null }
+        uniforms: {
 
-    },
-    vertexShader,
-    fragmentShader,
-    side: THREE.BackSide
+            envMap: { value: null }
 
-})
+        },
+        vertexShader,
+        fragmentShader,
+        side: THREE.BackSide
+
+    })
+
+} )();
