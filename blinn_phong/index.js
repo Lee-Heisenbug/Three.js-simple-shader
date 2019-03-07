@@ -1,58 +1,71 @@
 let phongExample = createPhongExample();
 let blinnPhongExample = createBlinnPhongExample();
+let renderer = new THREE.WebGLRenderer( { canvas: document.querySelector( '#scene' ) } );
+
+setupRenderer();
+setupOribitControls();
 renderTwoScenesOnOneCanvas();
-guiControl();
+// guiControl();
 
 function createPhongExample() {
 
-    let example = createAlikeExample();
+    let example = new Example();
+    return example;
 
-};
+}
 function createBlinnPhongExample() {
     
-    let example = createAlikeExample();
+    let example = new Example();
+    return example;
 
-};
-function Example() {
-
-
-    this.scene = new THREE.Scene(),
-    this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / 2 / window.innerHeight, 0.1, 1000 )
-
-    this.createScene();
-    this.autoResizeCamera();
-    
 }
 
-Object.assign( Example.prototype, {
+function setupRenderer() {
 
-    createScene: function() {
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.autoClearColor = false;
+    autoResizeRenderer();
 
-        
+}
 
-    },
-    autoResizeCamera: function() {
+function autoResizeRenderer() {
 
-        let self = this;
+    resizeRenderer();
+    window.addEventListener( 'resize', resizeRenderer );
 
-        this.resizeCamera();
-        window.addEventListener( 'resize', function() {
+}
+function resizeRenderer() {
 
-            self.resizeCamera();
+    renderer.setSize( window.innerWidth, window.innerHeight );
 
-        } );
+}
+function setupOribitControls() {
 
-    },
-    resizeCamera: function() {
+    new THREE.OrbitControls( phongExample.camera, renderer.domElement );
+    new THREE.OrbitControls( blinnPhongExample.camera, renderer.domElement );
 
-        this.camera.aspect = window.innerWidth / 2 / window.innerHeight;
-        this.camera.updateProjectionMatrix();
+}
+function renderTwoScenesOnOneCanvas() {
 
-    }
+    renderer.clearColor();
+    renderPhongExample();
+    renderBlinnPhongExample();
 
-} )
+    requestAnimationFrame( renderTwoScenesOnOneCanvas );
 
-function renderTwoScenesOnOneCanvas() {};
+}
+function renderPhongExample() {
+
+    renderer.setViewport( 0, 0, window.innerWidth / 2, window.innerHeight );
+    renderer.render( phongExample.scene, phongExample.camera );
+
+}
+function renderBlinnPhongExample() {
+
+    renderer.setViewport( window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight );
+    renderer.render( blinnPhongExample.scene, blinnPhongExample.camera );
+
+}
 function guiControl(){
 
     gui = new dat.GUI();
