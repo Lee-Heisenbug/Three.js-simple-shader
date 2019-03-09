@@ -16,7 +16,7 @@ Object.assign( Example.prototype, {
 
         let floor = new THREE.Mesh(
             new THREE.PlaneBufferGeometry(),
-            new THREE.MeshPhongMaterial()
+            new PhongMaterial()
         );
         floor.rotation.x = - Math.PI / 2;
         this.scene.add( floor );
@@ -24,9 +24,12 @@ Object.assign( Example.prototype, {
         this.camera.position.set( 1, 1, 1 );
         this.scene.add( this.camera );
 
-        this.light.position.set( 0, 0.01, 0 );
-        this.light.intensity = 0.05;
+        this.light.position.set( 0, 0.3, 0 );
+        this.light.intensity = 0.003;
         this.scene.add( this.light );
+
+        let lightHelper = new THREE.PointLightHelper( this.light );
+        this.scene.add( lightHelper );
         
         this.scene.add( new THREE.AxesHelper( 1 ) );
 
