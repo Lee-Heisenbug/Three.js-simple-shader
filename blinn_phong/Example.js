@@ -1,8 +1,9 @@
 function Example() {
 
 
-    this.scene = new THREE.Scene(),
-    this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / 2 / window.innerHeight, 0.1, 1000 )
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / 2 / window.innerHeight, 0.1, 1000 );
+    this.light = new THREE.PointLight( new THREE.Color( 255, 255, 255 ) );
 
     this.createScene();
     this.autoResizeCamera();
@@ -15,13 +16,19 @@ Object.assign( Example.prototype, {
 
         let floor = new THREE.Mesh(
             new THREE.PlaneBufferGeometry(),
-            new THREE.MeshBasicMaterial()
+            new THREE.MeshPhongMaterial()
         );
-
-        this.camera.position.set( 1, 1, 1 );
-
+        floor.rotation.x = - Math.PI / 2;
         this.scene.add( floor );
+        
+        this.camera.position.set( 1, 1, 1 );
         this.scene.add( this.camera );
+
+        this.light.position.set( 0, 0.01, 0 );
+        this.light.intensity = 0.05;
+        this.scene.add( this.light );
+        
+        this.scene.add( new THREE.AxesHelper( 1 ) );
 
     },
     autoResizeCamera: function() {
