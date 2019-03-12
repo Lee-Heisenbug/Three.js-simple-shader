@@ -35,16 +35,20 @@
         varying vec2 vUv;
 
         vec3 getDiffuse( vec3 );
+        vec3 getSpecular( vec3 );
 
         #if NUM_DIR_LIGHTS > 0
             vec3 getDirectionalLightsDiffuse( vec3 );
+            vec3 getDirectionalLightsSpecular( vec3 );
         #endif
 
         #if NUM_POINT_LIGHTS > 0
             vec3 getPointLightsDiffuse( vec3 );
+            vec3 getPointLightsSpecular( vec3 );
         #endif
 
         vec3 calculateDiffuse( const in vec3, const in vec3, const in vec3 );
+        vec3 calculateSpecular( vec3, vec3, vec3, vec3 );
 
         void main(){
 
@@ -56,7 +60,6 @@
             vec3 specular = vec3( 0 );
             vec3 result;
 
-            vec3 fragPosition = normalize( vPosition );
             vec3 reflectDir;
             float specularStrength;
 
@@ -80,7 +83,7 @@
 
             diffuse = getDiffuse( color );
 
-            // specular = getSpecular();
+            specular = getSpecular( specularColor );
 
             result = ambient + diffuse + specular;
 
@@ -104,6 +107,7 @@
 
             #endif
             
+            return vec3( 0.0 );
             return diffuse;
 
         }
@@ -159,24 +163,86 @@
 
         }
 
-        // vec3 getSpecular() {
+        vec3 getSpecular( vec3 specularColor ) {
 
-        //     for( int i = 0; i < NUM_DIR_LIGHTS; ++i ){
+            vec3 specular = vec3( 0 );
 
-        //         diffuse = diffuse + calculateDiffuse(
-        //             color, directionalLights[i].color,
-        //             directionalLights[i].direction, fragNormal
-        //         );
+            #if NUM_DIR_LIGHTS > 0
+            
+                specular += getDirectionalLightsSpecular( specularColor );
 
-        //         reflectDir = reflect( - directionalLights[i].direction, fragNormal );
+            #endif
 
-        //         specularStrength = pow( max( dot( reflectDir, - fragPosition ) , 0.0 ), shininess );
+            #if NUM_POINT_LIGHTS > 0
+            
+                specular += getPointLightsSpecular( specularColor );
 
-        //         specular = specular + specularColor * directionalLights[i].color * specularStrength;
-    
-        //     }
+            #endif
+            
+            return specular;
 
-        // }
+        }
+
+        #if NUM_DIR_LIGHTS > 0
+            vec3 getDirectionalLightsSpecular( vec3 specularColor ) {
+                
+                vec3 specular = vec3( 0 );
+                vec3 viewDir = - normalize( vPosition );
+
+                for( int i = 0; i < NUM_DIR_LIGHTS; ++i ) {
+
+                    specular += calculateSpecular(
+                        specularColor * directionalLights[ i ].color,
+                        directionalLights[i].direction,
+                        viewDir,
+                        vNormal
+                    );
+
+                }
+
+                return specular;
+
+            }
+        #endif
+
+        #if NUM_POINT_LIGHTS > 0
+            vec3 getPointLightsSpecular( vec3 specularColor ) {
+
+                vec3 specular = vec3( 0 );
+                vec3 pointLightDirection;
+                vec3 viewDir = - normalize( vPosition );
+
+                for( int i = 0; i < NUM_POINT_LIGHTS; ++i ) {
+
+                    pointLightDirection = pointLights[ i ].position - vPosition;
+
+                    specular += calculateSpecular(
+                        specularColor * pointLights[ i ].color,
+                        pointLightDirection,
+                        viewDir,
+                        vNormal
+                    );
+
+                }
+
+                return specular;
+
+            }
+        #endif
+
+        vec3 calculateSpecular(
+            vec3 color,
+            vec3 lightDir,
+            vec3 viewDir,
+            vec3 fragNormal
+        ) {
+
+            vec3 reflectDir = reflect( - lightDir, fragNormal );
+            float specularStrength = pow( max( dot( reflectDir, viewDir ) , 0.0 ), shininess );
+
+            return color * specularStrength;
+
+        }
     `;
 
     window.PhongMaterial = MaterialFactory( {
