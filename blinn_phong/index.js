@@ -16,6 +16,8 @@ function createPhongExample() {
 function createBlinnPhongExample() {
     
     let example = new Example();
+    example.floor.material = new BlinnPhongMaterial();
+    example.floor.material.shininess = 0.5;
     return example;
 
 }
