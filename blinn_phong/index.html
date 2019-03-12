@@ -10,10 +10,26 @@
 				top: 0;
 				left: 0;
 			}
+			#phong{
+				position: fixed;
+				top: 0;
+				left: 0;
+				margin: 25px;
+				color: white;
+			}
+			#blinn-phong{
+				position: fixed;
+				top: 0;
+				right: 0;
+				margin: 25px;
+				color: white;
+			}
 		</style>
 	</head>
 	<body>
 		<canvas id="scene"></canvas>
+		<h1 id="phong">Phong</h1>
+		<h1 id="blinn-phong">BlinnPhong</h1>
 		<script src="../lib/dat.gui.min.js"></script>
 		<script src="../lib/three.js"></script>
 		<script src="../lib/OrbitControls.js"></script>
