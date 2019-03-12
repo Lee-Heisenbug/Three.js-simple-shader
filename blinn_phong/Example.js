@@ -19,6 +19,7 @@ Object.assign( Example.prototype, {
             new PhongMaterial()
         );
         floor.rotation.x = - Math.PI / 2;
+        floor.material.shininess = 0.5;
         this.scene.add( floor );
         
         this.camera.position.set( 1, 1, 1 );
