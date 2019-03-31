@@ -7,6 +7,7 @@ function Example( canvas ) {
     this.box = new THREE.Mesh( new THREE.BoxGeometry(), new THREE.MeshBasicMaterial() );
     this.floor = null;
     this.renderer = new THREE.WebGLRenderer( { canvas: canvas } );
+    this.renderer.shadowMap.enabled = true;
 
     this.createScene();
     this.setupRenderer();
@@ -22,10 +23,10 @@ Object.assign( Example.prototype, {
         // add floor
         this.floor = new THREE.Mesh(
             new THREE.PlaneBufferGeometry( 10, 10, 1, 1 ),
-            new BlinnPhongMaterial()
+            new DirectionalShadowMaterial()
         );
         this.floor.rotation.x = - Math.PI / 2;
-        this.floor.material.shininess = 0.5;
+        this.floor.receiveShadow = true;
         this.scene.add( this.floor );
 
         // add camera
@@ -35,11 +36,13 @@ Object.assign( Example.prototype, {
         // add box for shadow
         this.box.material.color.set( 0x00ffff );
         this.box.position.set( 0, 2, 0 );
+        this.box.castShadow = true;
         this.scene.add( this.box );
 
         // add light
-        this.light.position.set( 5, 10, -5 );
+        this.light.position.set( 0, 10, 0 );
         this.light.intensity = 0.5;
+        this.light.castShadow = true;
         this.scene.add( this.light );
 
         // add light helper
