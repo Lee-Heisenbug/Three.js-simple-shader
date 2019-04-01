@@ -30,12 +30,12 @@ Object.assign( Example.prototype, {
         this.scene.add( this.floor );
 
         // add camera
-        this.camera.position.set( 3, 3, 3 );
+        this.camera.position.set( 0, 3, 3 );
         this.scene.add( this.camera );
 
         // add box for shadow
         this.box.material.color.set( 0x00ffff );
-        this.box.position.set( 0, 2, 0 );
+        this.box.position.set( 0, 0, 0 );
         this.box.castShadow = true;
         this.scene.add( this.box );
 
