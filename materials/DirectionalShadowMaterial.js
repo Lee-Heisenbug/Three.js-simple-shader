@@ -44,9 +44,6 @@
           // perform perspective divide
           vec3 projCoords = directionalShadowCoord.xyz / directionalShadowCoord.w;
 
-          // transform to [0,1] range
-          projCoords = projCoords * 0.5 + 0.5;
-
           // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
           float closestDepth = texture2D( directionalShadowMap[ i ], projCoords.xy ).r;
 
