@@ -40,14 +40,14 @@ Object.assign( Example.prototype, {
         this.scene.add( this.box );
 
         // add light
-        this.light.position.set( 0, 10, 0 );
+        this.light.position.set( 3, 3, 3 );
         this.light.intensity = 0.5;
         this.light.castShadow = true;
         this.scene.add( this.light );
 
         // add light helper
-        let lightHelper = new THREE.DirectionalLightHelper( this.light );
-        this.scene.add( lightHelper );
+        this.lightHelper = new THREE.DirectionalLightHelper( this.light );
+        this.scene.add( this.lightHelper );
         
         // add axes helper
         this.scene.add( new THREE.AxesHelper( 1 ) );
@@ -98,6 +98,8 @@ Object.assign( Example.prototype, {
         let self = this;
 
         this.renderScene();
+
+        this.lightHelper.update();
 
         requestAnimationFrame( () => {
 
