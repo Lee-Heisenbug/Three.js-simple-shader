@@ -51,7 +51,7 @@ var fshader = `
     }
 `;
 
-var customMaterial, fireGeo, fire, gui, instanceCount = 1000, clock = new THREE.Clock(), radius = 1,
+var customMaterial, fireGeo, fire, gui, instanceCount = 1000, clock = new THREE.Clock(), radius = 0.2,
     minFadeIn = 0.2, maxFadeOut = 0.7, maxLifeTime = 3, maxSpeed = 2;
 var textureLoader = new THREE.TextureLoader(), colorMap;
 
