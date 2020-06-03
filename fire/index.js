@@ -7,6 +7,7 @@ var vshader = `
     attribute float instanceFadeOut;
 
     uniform float time;
+    uniform float size;
 
     varying float currentOpacity;
 
@@ -21,6 +22,9 @@ var vshader = `
         currentPosition.x += instanceOffset.x;
         currentPosition.z += instanceOffset.y;
         currentPosition.y =  currentTime * instanceSpeed;
+
+        vec4 mvPosition = vec4( currentPosition, 1.0 );
+        mvPosition = modelViewMatrix * mvPosition;
 
         if( currentProgress < instanceFadeIn ) { //fading in
 
@@ -39,7 +43,8 @@ var vshader = `
         // currentOpacity = 0.5;
 
         gl_Position = projectionMatrix * modelViewMatrix * vec4( currentPosition, 1.0 );
-        gl_PointSize = 10.0;
+        gl_PointSize = size;
+        gl_PointSize *= ( 1.0 / - mvPosition.z );
 
     }
 `;
@@ -51,8 +56,8 @@ var fshader = `
     }
 `;
 
-var customMaterial, fireGeo, fire, gui, instanceCount = 1000, clock = new THREE.Clock(), radius = 0.2,
-    minFadeIn = 0.2, maxFadeOut = 0.7, maxLifeTime = 3, maxSpeed = 2;
+var customMaterial, fireGeo, fire, gui, instanceCount = 100, clock = new THREE.Clock(), radius = 0.1,
+    minFadeIn = 0.2, maxFadeOut = 0.7, maxLifeTime = 1, maxSpeed = 2;
 var textureLoader = new THREE.TextureLoader(), colorMap;
 
 constructScene( scene );
@@ -92,7 +97,8 @@ function createFire() {
     customMaterial = new THREE.ShaderMaterial({
         uniforms: THREE.UniformsUtils.merge( [
             {
-                time: new THREE.Uniform( 0 )
+                time: new THREE.Uniform( 0 ),
+                size: new THREE.Uniform( 50.0 )
             }
         ] ),
         vertexShader: vshader,
