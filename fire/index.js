@@ -51,8 +51,11 @@ var vshader = `
 
 var fshader = `
     varying float currentOpacity;
+    uniform sampler2D map;
+    uniform vec3 color;
     void main(){
-        gl_FragColor = vec4(0.3, 0.1, 0.05,currentOpacity);
+        gl_FragColor = texture2D( map, gl_PointCoord.xy );
+        gl_FragColor *= vec4( color, currentOpacity );
     }
 `;
 
@@ -65,6 +68,12 @@ constructScene( scene );
 guiControl();
 
 animate();
+
+textureLoader.load( '../images/textures/smokeparticle.png', t => {
+
+    customMaterial.uniforms.map.value = t;
+
+} )
 
 function animate() {
 
@@ -98,7 +107,9 @@ function createFire() {
         uniforms: THREE.UniformsUtils.merge( [
             {
                 time: new THREE.Uniform( 0 ),
-                size: new THREE.Uniform( 50.0 )
+                size: new THREE.Uniform( 100.0 ),
+                map: new THREE.Uniform( null ),
+                color: new THREE.Uniform( new THREE.Vector3( 0.6, 0.4, 0.1 ) )
             }
         ] ),
         vertexShader: vshader,
